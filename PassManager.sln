@@ -3,7 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PassManager", "PassManager\PassManager.csproj", "{E330BDF9-5704-444F-840F-FEF32CD8ECF7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PassManager.View_UIWPF", "PassManager\PassManager.View_UIWPF.csproj", "{E330BDF9-5704-444F-840F-FEF32CD8ECF7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PassManager.Data", "PassManager.Data\PassManager.Data.csproj", "{732428EB-F3BD-4347-931A-006E56308761}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PassManager.TestConsole", "PassManager.TestConsole\PassManager.TestConsole.csproj", "{CD1110FB-6AC7-433B-9EAF-D9F92788119F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PassManager.Logic", "PassManager.Logic\PassManager.Logic.csproj", "{99EEEF8F-9596-4B21-9854-289864FE695D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +21,18 @@ Global
 		{E330BDF9-5704-444F-840F-FEF32CD8ECF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E330BDF9-5704-444F-840F-FEF32CD8ECF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E330BDF9-5704-444F-840F-FEF32CD8ECF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{732428EB-F3BD-4347-931A-006E56308761}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{732428EB-F3BD-4347-931A-006E56308761}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{732428EB-F3BD-4347-931A-006E56308761}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{732428EB-F3BD-4347-931A-006E56308761}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD1110FB-6AC7-433B-9EAF-D9F92788119F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD1110FB-6AC7-433B-9EAF-D9F92788119F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD1110FB-6AC7-433B-9EAF-D9F92788119F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD1110FB-6AC7-433B-9EAF-D9F92788119F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99EEEF8F-9596-4B21-9854-289864FE695D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99EEEF8F-9596-4B21-9854-289864FE695D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99EEEF8F-9596-4B21-9854-289864FE695D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99EEEF8F-9596-4B21-9854-289864FE695D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

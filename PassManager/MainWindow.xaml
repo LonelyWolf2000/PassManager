@@ -1,12 +1,140 @@
-﻿<Window x:Class="PassManager.MainWindow"
+﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:PassManager"
+        xmlns:viewModel="clr-namespace:PassManager.ViewModel"
+        x:Class="PassManager.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
-    </Grid>
+    Title="Менеджер паролей" Height="350" Width="440" MinHeight="350" MinWidth="440" WindowStartupLocation="CenterScreen">
+
+    <Window.DataContext>
+        <viewModel:MainWindowViewModel></viewModel:MainWindowViewModel>
+    </Window.DataContext>
+    
+    <Window.Resources>
+        <Style x:Key="BasePanel">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding MainWindowState}" Value="AddingState">
+                    <Setter Property="StackPanel.Visibility" Value="Collapsed"></Setter>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="AcceptPanel">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding MainWindowState}" Value="ViewState">
+                    <Setter Property="StackPanel.Visibility" Value="Collapsed"></Setter>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="ListBox">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ElementName=stk_acceptButtons, Path=Visibility}" Value="Visible">
+                    <Setter Property="ListBox.IsEnabled" Value="False"></Setter>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="ReqField">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsNameFieldValid}" Value="False">
+                    <Setter Property="TextBox.Background" Value="Salmon"></Setter>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <DockPanel>
+        <StackPanel x:Name="menu" Height="20" DockPanel.Dock="Top" Orientation="Horizontal">
+            <Button x:Name="btn_newFile" Command="{Binding NewFileCommand}" Content="Новый" Width="64" Margin="5,2,2,0" VerticalContentAlignment="Center" FontSize="9"/>
+            <Button x:Name="btn_openFile" Command="{Binding OpenFileCommand}" Content="Открыть" Width="64" Margin="0,2,2,0" VerticalContentAlignment="Center" FontSize="9"/>
+            <Button x:Name="btn_saveFile" Command="{Binding SaveFileCommand}" Content="Сохранить" Width="64" Margin="0,2,2,0" VerticalContentAlignment="Center" FontSize="9" Height="18" VerticalAlignment="Top"/>
+        </StackPanel>
+
+        <StatusBar x:Name="statusBar" DockPanel.Dock="Bottom" FontSize="8" Margin="0" HorizontalContentAlignment="Center">
+            <Label x:Name="statusLabel" Content="{Binding Status}" Padding="0" FontSize="10"/>
+        </StatusBar>
+
+        <DockPanel x:Name="dockPanel" Width="200" Margin="5,0,0,0">
+            <TextBox x:Name="tb_search" Visibility="Hidden" Height="23" TextWrapping="Wrap" FontStyle="Italic" Foreground="LightGray" Margin="2,0,2,2" Text="Поиск..." DockPanel.Dock="Top"/>
+            <ListBox x:Name="listBox" ItemsSource="{Binding PasswordManager.PassCollection, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding CurrentPass}" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True" Height="auto" DockPanel.Dock="Bottom" SelectedIndex="0" Padding="0" HorizontalContentAlignment="Stretch">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Margin="1">
+                            <Border BorderBrush="#FFB9B9B9" CornerRadius="3" BorderThickness="1" Padding="5,2" HorizontalAlignment="Stretch">
+                                <TextBlock Text="{Binding Path=Name}" FontWeight="Bold" FontSize="12" />
+                            </Border>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </DockPanel>
+
+        <DockPanel x:Name="dockPanel1" Margin="5,2" Background="#FFB9B9B9" ScrollViewer.VerticalScrollBarVisibility="Disabled" DockPanel.Dock="Top">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <ItemsControl ScrollViewer.VerticalScrollBarVisibility="Auto" Background="White" BorderBrush="White">
+                    <TextBox x:Name="tb_nameNote" Style="{StaticResource ReqField}"
+                             Text="{Binding Path=NameField, UpdateSourceTrigger=PropertyChanged}" Height="23"
+                             TextWrapping="Wrap" Margin="0,0,0,2" VerticalAlignment="Top" MinWidth="200"
+                             DockPanel.Dock="Top" BorderBrush="#FFCCCDD1" ToolTip="Поле для имени записи (имя должно быть уникальным)" />
+                    <TextBox x:Name="tb_resourse"
+                             Text="{Binding Path=ResourceField, UpdateSourceTrigger=PropertyChanged}"
+                             Height="23"
+                             TextWrapping="Wrap" Margin="0,0,0,2" VerticalAlignment="Top" DockPanel.Dock="Top"
+                             BorderBrush="#FFCCCDD1" ToolTip="Поле для ресурса" />
+                    <TextBox x:Name="tb_login"
+                             Text="{Binding Path=LoginField, UpdateSourceTrigger=PropertyChanged}"
+                             Height="23" TextWrapping="Wrap" Margin="0,0,0,2" VerticalAlignment="Top"
+                             DockPanel.Dock="Top"
+                             BorderBrush="#FFCCCDD1" ToolTip="Поле для логина" />
+                    <TextBox x:Name="tb_pass"
+                             Text="{Binding Path=PassField, UpdateSourceTrigger=PropertyChanged}"
+                             Height="23" TextWrapping="Wrap" Margin="0,0,0,2" VerticalAlignment="Top"
+                             DockPanel.Dock="Top"
+                             BorderBrush="#FFCCCDD1" ToolTip="Поле для пароля" />
+                    <TextBox x:Name="tb_passDate"
+                             Text="{Binding Path=DateField, UpdateSourceTrigger=PropertyChanged}"
+                             IsReadOnly="True" Height="23" TextWrapping="Wrap" Margin="0,0,0,2" VerticalAlignment="Top"
+                             DockPanel.Dock="Top" BorderBrush="#FFCCCDD1" IsEnabled="False" ToolTip="Дата создания/редактирования пароля" />
+                    <TextBox x:Name="tb_comment"
+                             Text="{Binding Path=CommentField, UpdateSourceTrigger=PropertyChanged}"
+                             TextWrapping="Wrap" Margin="0" MinWidth="200"
+                             DockPanel.Dock="Top" Padding="0" MinHeight="120"
+                             BorderBrush="#FFCCCDD1" AcceptsReturn="True" VerticalAlignment="Stretch" ToolTip="Комментарии" />
+
+                    <StackPanel x:Name="stk_baseButtons" Style="{StaticResource BasePanel}" Orientation="Horizontal" Margin="0,2" DockPanel.Dock="Bottom"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Bottom" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                CanVerticallyScroll="True">
+                        
+                        <Button x:Name="btn_newNote" Command="{Binding AddNoteCommand}"
+                                CommandParameter="{Binding ElementName=tb_nameNote}" Width="16"
+                                Margin="0,0,5,0" HorizontalContentAlignment="Center" FontSize="9"
+                                VerticalAlignment="Top"
+                                ToolTip="Добавить новую запись" Content="+" />
+                        <Button x:Name="btn_editNote" Content="Сохранить изменения" Command="{Binding EditNoteCommand}" Width="auto"
+                                Margin="0,0,5,0" HorizontalContentAlignment="Center" FontSize="9"
+                                VerticalAlignment="Bottom" VerticalContentAlignment="Bottom" />
+                        <Button x:Name="btn_addRemove" Content="-" Command="{Binding RemoveNoteCommand}" CommandParameter="{Binding ElementName=tb_nameNote}" 
+                                Width="16" Margin="0,0,5,0" HorizontalContentAlignment="Center" FontSize="9" VerticalAlignment="Top"
+                                ToolTip="Удалить выбранную запись" />
+                    </StackPanel>
+
+                    <StackPanel x:Name="stk_acceptButtons" Style="{StaticResource AcceptPanel}" Orientation="Horizontal" Margin="0,2" DockPanel.Dock="Bottom"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Bottom" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                CanVerticallyScroll="True">
+                        <Button x:Name="btn_addAccept" Command="{Binding SaveNoteCommand}"
+                                CommandParameter="{Binding ElementName=tb_nameNote}" Content="Подтвердить"
+                                Margin="0,0,5,0" HorizontalContentAlignment="Center" FontSize="9"
+                                VerticalAlignment="Top"
+                                ToolTip="Добавить новую запись" />
+                        <Button x:Name="btn_addCancel" Command="{Binding CanselAdd_Command}" Content="Отмена" Width="auto"
+                                Margin="0,0,5,0" HorizontalContentAlignment="Center" FontSize="9"
+                                VerticalAlignment="Bottom" VerticalContentAlignment="Bottom" />
+                    </StackPanel>
+                </ItemsControl>
+            </ScrollViewer>
+        </DockPanel>
+    </DockPanel>
 </Window>
+
