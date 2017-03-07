@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using PassManager.Data;
+﻿using PassManager.Data;
 
 namespace PassManager.Logic
 {

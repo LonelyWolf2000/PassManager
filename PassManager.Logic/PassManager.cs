@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using PassManager.Data;
 
 
@@ -106,6 +99,7 @@ namespace PassManager.Logic
 				Resource = _dataModule[index].Resource,
 				Login = _dataModule[index].Login,
 				Pass = _dataModule[index].Pass,
+				DateUpdatePass = _dataModule[index].DateUpdatePass,
 				Comment = _dataModule[index].Comment
 			};
 		}
@@ -113,12 +107,15 @@ namespace PassManager.Logic
 		public void SelectPass(string name)
 		{
 			int index = _dataModule.SearchByName(name);
-			if (index > -1)
+			if (index != -1)
 				SelectPass(index);
 		}
 
 		public void AddNewPass(PassContainer passContainer)
 		{
+			if (passContainer.DateUpdatePass == "")
+				passContainer.DateUpdatePass = DateTime.Today.ToShortDateString();
+
 			if (_dataModule.AddPassContainer(passContainer))
 				_currentPass = passContainer;
 
@@ -140,12 +137,16 @@ namespace PassManager.Logic
 			if(_dataModule[_currentIndex].Name != _currentPass.Name && _dataModule.SearchByName(_currentPass.Name) > -1)
 				return;
 			
+			if(_dataModule[_currentIndex].Pass != _currentPass.Pass)
+				_dataModule[_currentIndex].DateUpdatePass = DateTime.Today.ToShortDateString();
+
 			_dataModule[_currentIndex].Name = _currentPass.Name;
 			_dataModule[_currentIndex].Resource = _currentPass.Resource;
 			_dataModule[_currentIndex].Login = _currentPass.Login;
 			_dataModule[_currentIndex].Pass = _currentPass.Pass;
 			_dataModule[_currentIndex].Comment = _currentPass.Comment;
 
+			_dataModule.UpdateCollection();
 			SaveFile(_currentFile, _currentFileType);
 		}
 

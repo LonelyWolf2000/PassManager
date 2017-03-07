@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace PassManager.Data.FileModule
+﻿namespace PassManager.Data.FileModule
 {
 	internal class FileModule : IFileModule
 	{
@@ -8,7 +6,7 @@ namespace PassManager.Data.FileModule
 
 		public FileModule() : this(FileType.xml)
 		{
-			//FileInterface = new XMLMod();
+			
 		}
 
 		public FileModule(FileType fileType)

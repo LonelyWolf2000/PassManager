@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace PassManager.Data.FileModule
+﻿namespace PassManager.Data.FileModule
 {
 	internal interface IFileModule
 	{

@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using PassManager.Data;
 using PassManager.Infrastructure;
 using PassManager.Logic;
@@ -18,8 +8,7 @@ namespace PassManager.ViewModel
 	enum MainWindowState
 	{
 		ViewState,
-		AddingState,
-		EditingState
+		AddingState
 	}
 
 	internal class MainWindowViewModel : ViewModelBase
@@ -29,8 +18,8 @@ namespace PassManager.ViewModel
 		private MainWindowState _mainWindowState = MainWindowState.ViewState;
 		private string _status = "";
 		private string _savedStatus = "";
-		private bool _isNamePassChanged;
 		private bool _isNameFieldValid = true;
+		private bool _isNameFieldChanged;
 
 		#region Props
 		public MainWindowState MainWindowState
@@ -60,8 +49,10 @@ namespace PassManager.ViewModel
 			{
 				if(CurrentPass == null) return;
 
+				if(MainWindowState == MainWindowState.ViewState)
+					_isNameFieldChanged = true;
+
 				IsFieldsChanged = true;
-				_isNamePassChanged = true;
 				CurrentPass.Name = value;
 				OnPropertyChanged();
 			}
@@ -122,13 +113,14 @@ namespace PassManager.ViewModel
 		public string DateField
 		{
 			get { return CurrentPass?.DateUpdatePass; }
-			set
-			{
-				if (CurrentPass == null) return;
+			//set
+			//{
+			//	if (CurrentPass == null) return;
 
-				IsFieldsChanged = true;
-				CurrentPass.DateUpdatePass = value;
-			}
+			//	IsFieldsChanged = true;
+			//	CurrentPass.DateUpdatePass = value;
+			//	OnPropertyChanged();
+			//}
 		}
 
 		public bool IsFieldsChanged { get; private set; }
@@ -164,6 +156,7 @@ namespace PassManager.ViewModel
 				IsFieldsChanged = false;
 				IsNameFieldValid = true;
 				Status = _savedStatus;
+				
 				OnPropertyChanged();
 				_CallFieldsChangedEvent();
 			}
@@ -312,17 +305,24 @@ namespace PassManager.ViewModel
 
 		private void EditNoteExecute(object sender)
 		{
-			if (_ValidateNameField())
+			if (_isNameFieldChanged && !_ValidateNameField())
 				return;
 
 			PasswordManager.EditPass();
 			IsFieldsChanged = false;
+			_isNameFieldChanged = false;
 			_StatusChange(Status, "Изменения сохранены");
 		}
 
 		private bool CanEditNoteExecute(object parameter)
 		{
-			return CurrentPass != null && IsFieldsChanged && _ValidateNameField();
+			//if (!IsFieldsChanged) return false;
+
+			//TextBox tb = parameter as TextBox;
+			//if(tb != null)
+			//	_ValidateNameField(tb.Text);
+
+			return CurrentPass != null && IsFieldsChanged;
 		}
 		#endregion
 
@@ -343,6 +343,8 @@ namespace PassManager.ViewModel
 		{
 			PasswordManager.AddNewPass(CurrentPass);
 			MainWindowState = MainWindowState.ViewState;
+			CurrentPass = PasswordManager.CurrentPass;
+			IsFieldsChanged = false;
 			_StatusChange(Status, "Новая запись добавлена");
 		}
 
@@ -374,21 +376,20 @@ namespace PassManager.ViewModel
 
 		private bool CanRemoveNoteExecute(object parameter)
 		{
-			TextBox tb = parameter as TextBox;
-			return CurrentPass != null && !IsFieldsChanged && PasswordManager.PassCollection.SearchByName(tb?.Text) != -1;
+			return CurrentPass != null && !IsFieldsChanged && PasswordManager.PassCollection.SearchByName(NameField) != -1;
 		}
 		#endregion
 
 		#region CanselAdd_Command
 
-		RelayCommand _canselAdd_Command;
-		public RelayCommand CanselAdd_Command
+		RelayCommand _canselAddCommand;
+		public RelayCommand CanselAddCommand
 		{
 			get
 			{
-				if (_canselAdd_Command == null)
-					_canselAdd_Command = new RelayCommand(CanselAdd_CommandExecute);
-				return _canselAdd_Command;
+				if (_canselAddCommand == null)
+					_canselAddCommand = new RelayCommand(CanselAdd_CommandExecute);
+				return _canselAddCommand;
 			}
 		}
 
@@ -403,14 +404,14 @@ namespace PassManager.ViewModel
 
 		private bool _ValidateNameField()
 		{
-			if (NameField.Length == 0)
+			if (NameField?.Length == 0)
 			{
 				IsNameFieldValid = false;
 				_StatusChange(Status, "Ошибка: поле с именем не может быть пустым");
 				return false;
 			}
 
-			if (PasswordManager.PassCollection.SearchByName(NameField) != -1)
+			if (NameField != null && PasswordManager.PassCollection.SearchByName(NameField) != -1)
 			{
 				IsNameFieldValid = false;
 				_StatusChange(Status, "Ошибка: запись с таким именем уже существует");
@@ -435,7 +436,7 @@ namespace PassManager.ViewModel
 			OnPropertyChanged("LoginField");
 			OnPropertyChanged("PassField");
 			OnPropertyChanged("DateField");
-			OnPropertyChanged("DateField");
+			OnPropertyChanged("CommentField");
 		}
 
 		private void _ClearFields()
@@ -444,6 +445,7 @@ namespace PassManager.ViewModel
 			ResourceField = "";
 			LoginField = "";
 			PassField = "";
+			//DateField = "";
 			CommentField = "";
 		}
 	}

@@ -2,10 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PassManager.Data
 {
@@ -52,7 +48,7 @@ namespace PassManager.Data
 			_passwordList.Add(passContainer);
 			_count++;
 			Reset();
-			CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+			UpdateCollection();
 			return true;
 		}
 
@@ -73,13 +69,18 @@ namespace PassManager.Data
 			_passwordList.RemoveAt(index);
 			_count--;
 			Reset();
-			CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+			UpdateCollection();
 			return true;
 		}
 
 		public int SearchByName(string name)
 		{
 			return _passwordList.FindIndex(x => x.Name == name);
+		}
+
+		public void UpdateCollection()
+		{
+			CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
 		}
 
 		#region IEnumerable & IEnumerator

@@ -92,9 +92,9 @@
                              DockPanel.Dock="Top"
                              BorderBrush="#FFCCCDD1" ToolTip="Поле для пароля" />
                     <TextBox x:Name="tb_passDate"
-                             Text="{Binding Path=DateField, UpdateSourceTrigger=PropertyChanged}"
+                             Text="{Binding Path=DateField, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"
                              IsReadOnly="True" Height="23" TextWrapping="Wrap" Margin="0,0,0,2" VerticalAlignment="Top"
-                             DockPanel.Dock="Top" BorderBrush="#FFCCCDD1" IsEnabled="False" ToolTip="Дата создания/редактирования пароля" />
+                             DockPanel.Dock="Top" BorderBrush="#FFCCCDD1" ToolTip="Дата последнего изменения поля пароля" Focusable="False" />
                     <TextBox x:Name="tb_comment"
                              Text="{Binding Path=CommentField, UpdateSourceTrigger=PropertyChanged}"
                              TextWrapping="Wrap" Margin="0" MinWidth="200"
@@ -114,7 +114,7 @@
                         <Button x:Name="btn_editNote" Content="Сохранить изменения" Command="{Binding EditNoteCommand}" Width="auto"
                                 Margin="0,0,5,0" HorizontalContentAlignment="Center" FontSize="9"
                                 VerticalAlignment="Bottom" VerticalContentAlignment="Bottom" />
-                        <Button x:Name="btn_addRemove" Content="-" Command="{Binding RemoveNoteCommand}" CommandParameter="{Binding ElementName=tb_nameNote}" 
+                        <Button x:Name="btn_addRemove" Content="-" Command="{Binding RemoveNoteCommand}" 
                                 Width="16" Margin="0,0,5,0" HorizontalContentAlignment="Center" FontSize="9" VerticalAlignment="Top"
                                 ToolTip="Удалить выбранную запись" />
                     </StackPanel>
@@ -128,7 +128,7 @@
                                 Margin="0,0,5,0" HorizontalContentAlignment="Center" FontSize="9"
                                 VerticalAlignment="Top"
                                 ToolTip="Добавить новую запись" />
-                        <Button x:Name="btn_addCancel" Command="{Binding CanselAdd_Command}" Content="Отмена" Width="auto"
+                        <Button x:Name="btn_addCancel" Command="{Binding CanselAddCommand}" Content="Отмена" Width="auto"
                                 Margin="0,0,5,0" HorizontalContentAlignment="Center" FontSize="9"
                                 VerticalAlignment="Bottom" VerticalContentAlignment="Bottom" />
                     </StackPanel>
