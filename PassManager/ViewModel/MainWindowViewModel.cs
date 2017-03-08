@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using System.Windows;
+using Microsoft.Win32;
 using PassManager.Data;
 using PassManager.Infrastructure;
 using PassManager.Logic;
@@ -22,6 +23,8 @@ namespace PassManager.ViewModel
 		private bool _isNameFieldChanged;
 
 		#region Props
+
+		public bool IsCanselClosing { get; private set; }
 		public MainWindowState MainWindowState
 		{
 			get { return _mainWindowState; }
@@ -316,12 +319,6 @@ namespace PassManager.ViewModel
 
 		private bool CanEditNoteExecute(object parameter)
 		{
-			//if (!IsFieldsChanged) return false;
-
-			//TextBox tb = parameter as TextBox;
-			//if(tb != null)
-			//	_ValidateNameField(tb.Text);
-
 			return CurrentPass != null && IsFieldsChanged;
 		}
 		#endregion
@@ -402,6 +399,55 @@ namespace PassManager.ViewModel
 		}
 		#endregion
 
+		#region Close_Command
+
+		RelayCommand _closeCommand;
+		public RelayCommand CloseCommand
+		{
+			get
+			{
+				if (_closeCommand == null)
+					_closeCommand = new RelayCommand(Close_CommandExecute);
+				return _closeCommand;
+			}
+		}
+
+		private void Close_CommandExecute(object sender)
+		{
+			MessageBoxResult result;
+			IsCanselClosing = false;
+
+			if (IsFieldsChanged)
+			{
+				result = MessageBox.Show("Запись редактировалась и не была сохнанена. Все равно закрыть?", "Внимание!", MessageBoxButton.YesNo);
+
+				if (result == MessageBoxResult.No)
+					IsCanselClosing = true;
+
+				return;
+			}
+
+
+			if (PasswordManager.IsSaved) return;
+
+			result = MessageBox.Show("Сохранить ли файл перед закрытием?", "Данные не сохранены", MessageBoxButton.YesNoCancel);
+
+			switch (result)
+			{
+				case MessageBoxResult.Yes:
+					PasswordManager.SaveFile(PasswordManager.CurrentFilePath);
+					IsCanselClosing = false;
+					break;
+				case MessageBoxResult.No:
+					IsCanselClosing = false;
+					break;
+				case MessageBoxResult.Cancel:
+					IsCanselClosing = true;
+					break;
+			}
+		}
+		#endregion
+
 		private bool _ValidateNameField()
 		{
 			if (NameField?.Length == 0)
@@ -437,16 +483,6 @@ namespace PassManager.ViewModel
 			OnPropertyChanged("PassField");
 			OnPropertyChanged("DateField");
 			OnPropertyChanged("CommentField");
-		}
-
-		private void _ClearFields()
-		{
-			NameField = "";
-			ResourceField = "";
-			LoginField = "";
-			PassField = "";
-			//DateField = "";
-			CommentField = "";
 		}
 	}
 }
